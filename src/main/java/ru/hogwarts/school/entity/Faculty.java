@@ -1,10 +1,16 @@
-package ru.hogwarts.school.model;
+package ru.hogwarts.school.entity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
 
+
+@Entity
+@Table(name="Факультеты")
 public class Faculty {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String color;
@@ -14,6 +20,10 @@ public class Faculty {
         this.name = name;
         this.color = color;
     }
+    public Faculty(){
+
+    }
+
 
     public Long getId() {
         return id;

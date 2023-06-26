@@ -1,52 +1,73 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.dto.FacultyDtoIn;
+import ru.hogwarts.school.dto.FacultyDtoOut;
+import ru.hogwarts.school.dto.StudentDtoIn;
+import ru.hogwarts.school.dto.StudentDtoOut;
+import ru.hogwarts.school.entity.Faculty;
+import ru.hogwarts.school.entity.Student;
+import ru.hogwarts.school.exception.FacultyNotFindException;
+import ru.hogwarts.school.exception.StudentNotFindException;
+import ru.hogwarts.school.mapper.FacultyMapper;
+import ru.hogwarts.school.mapper.StudentMapper;
+import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
 
-    Map<Long, Student> studentMap = new HashMap<>();
+    private final StudentRepository studentRepository;
 
-    private long counter = 0;
 
-    public Student createStudent(Student student) {        // Создание нового студента
-        student.setId(++counter);
-        studentMap.put(counter, student);
-        return student;
+    private final StudentMapper studentMapper;
+
+    public StudentService(StudentRepository studentRepository, StudentMapper studentMapper) {
+        this.studentRepository = studentRepository;
+        this.studentMapper = studentMapper;
     }
 
-    public Student readStudent(long id) {                // Получение студента по ID
-        return studentMap.get(id);
+    public StudentDtoOut createStudent(StudentDtoIn studentDtoIn) {
+        return studentMapper.toDto(studentRepository.save(studentMapper.toEntity(studentDtoIn)));
     }
 
-    public Student updateStudent(Student student) {     // Редактирование студента по его ID
-        if (studentMap.containsKey(student.getId())) {
-            studentMap.put(student.getId(), student);
-            return student;
-        }
-        return null;
+    public StudentDtoOut readStudent(long id) {
+        return studentRepository.findById(id)
+                .map(studentMapper::toDto)
+                .orElseThrow(()-> new StudentNotFindException(id));
     }
 
-    public Student deleteStudent(long id) {             // Удаление студента по его ID
-        return studentMap.remove(id);
+    public StudentDtoOut updateStudent(long id,StudentDtoIn studentDtoIn) {
+        return studentRepository.findById(id)
+                .map(oldFaculty -> {
+                    oldFaculty.setAge(studentDtoIn.getAge());
+                    oldFaculty.setName(studentDtoIn.getName());
+                    return studentMapper.toDto(studentRepository.save(oldFaculty));
+                })
+                .orElseThrow(()->new StudentNotFindException(id));
     }
 
-    public Collection<Student> endpointStudent(int age) {
-        return studentMap.values().stream()
-                .filter(student -> student.getAge() == age)
+    public StudentDtoOut deleteStudent(long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(()-> new StudentNotFindException(id));
+        studentRepository.delete(student);
+        return studentMapper.toDto(student);
+    }
+
+    public List<StudentDtoOut> endpointStudent(@Nullable Integer age) {
+        return Optional.ofNullable(age)
+                .map(studentRepository::findAllByAge)
+                .orElseGet(studentRepository::findAll)
+                .stream().map(studentMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    public Collection<Student> getAllStudents(){
-        return studentMap.values();
     }
 
 }
