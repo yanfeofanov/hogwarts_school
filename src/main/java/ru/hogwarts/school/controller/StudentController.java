@@ -1,7 +1,10 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
 import ru.hogwarts.school.entity.Student;
@@ -44,8 +47,25 @@ public class StudentController {
 
 
     @GetMapping
-    public List<StudentDtoOut> endpointStudent(@RequestParam(required = false) Integer age){
+    public List<StudentDtoOut> endpointStudent(@RequestParam(required = false) Integer age) {
         return studentService.endpointStudent(age);
+    }
+
+    @GetMapping("/filter")
+    public List<StudentDtoOut> findByAgeBetween(@RequestParam int ageFrom, @RequestParam int ageTo) {
+        return studentService.findByAgeBetween(ageFrom, ageTo);
+    }
+
+    @PatchMapping(value = "{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentDtoOut uploadAvatar(@PathVariable Long id,
+                                      @RequestPart("avatar") MultipartFile multipartFile) {
+        return studentService.uploadAvatar(multipartFile,id);
+
+    }
+
+    @GetMapping("{id}/faculty")
+    public FacultyDtoOut findFaculty(@PathVariable Long id){
+        return studentService.findFaculty(id);
     }
 
 }

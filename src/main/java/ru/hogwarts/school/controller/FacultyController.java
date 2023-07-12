@@ -1,6 +1,7 @@
 package ru.hogwarts.school.controller;
 
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.dto.FacultyDtoIn;
@@ -37,12 +38,12 @@ public class FacultyController {
     }
 
 
-    @PutMapping("{id}")                      // PUT http://localhost:8080/student/1
+    @PutMapping("/{id}")                      // PUT http://localhost:8080/student/1
     public FacultyDtoOut updateFaculty(@PathVariable Long id, @RequestBody FacultyDtoIn facultyDtoIn) {
         return facultyService.updateFaculty(id, facultyDtoIn );
     }
 
-    @DeleteMapping("{id}")                         // DELETE http://localhost:8080/student/1
+    @DeleteMapping("/{id}")                         // DELETE http://localhost:8080/student/1
     public FacultyDtoOut deleteFaculty(@PathVariable Long id) {
         return facultyService.deleteFaculty(id);
     }
@@ -52,5 +53,16 @@ public class FacultyController {
     public List<FacultyDtoOut> endpointFaculty(@RequestParam(required = false) String color){
         return facultyService.endpointFaculty(color);
     }
+
+    @GetMapping
+    public List<FacultyDtoOut> findByColorOrName(String color,String name){
+        return facultyService.findByColorOrName(color, name);
+    }
+
+    @GetMapping("{id}/students")
+    public List<StudentDtoOut> findStudents(@PathVariable Long id){
+        return facultyService.findStudents(id);
+    }
+
 
 }

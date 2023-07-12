@@ -1,12 +1,13 @@
 package ru.hogwarts.school.entity;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 
 
 @Entity
-@Table(name="Факультеты")
+@Table(name="faculties")
 public class Faculty {
 
     @Id
@@ -14,6 +15,9 @@ public class Faculty {
     private Long id;
     private String name;
     private String color;
+
+    @OneToMany(mappedBy = "faculty")
+    private List<Student> students;
 
     public Faculty(Long id, String name, String color) {
         this.id = id;

@@ -3,21 +3,19 @@ package ru.hogwarts.school.service;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import ru.hogwarts.school.dto.FacultyDtoIn;
+import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
-import ru.hogwarts.school.entity.Faculty;
+import ru.hogwarts.school.entity.Avatar;
 import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.exception.FacultyNotFindException;
 import ru.hogwarts.school.exception.StudentNotFindException;
 import ru.hogwarts.school.mapper.FacultyMapper;
 import ru.hogwarts.school.mapper.StudentMapper;
-import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,13 +24,17 @@ import java.util.stream.Collectors;
 public class StudentService {
 
     private final StudentRepository studentRepository;
-
-
     private final StudentMapper studentMapper;
 
-    public StudentService(StudentRepository studentRepository, StudentMapper studentMapper) {
+    private final AvatarService avatarService;
+
+    private final FacultyMapper facultyMapper;
+
+    public StudentService(StudentRepository studentRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper) {
         this.studentRepository = studentRepository;
         this.studentMapper = studentMapper;
+        this.avatarService = avatarService;
+        this.facultyMapper = facultyMapper;
     }
 
     public StudentDtoOut createStudent(StudentDtoIn studentDtoIn) {
@@ -70,4 +72,25 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
+    public List<StudentDtoOut> findByAgeBetween(int ageFrom, int ageTo) {
+        return studentRepository.findByAgeBetween(ageFrom,ageTo).stream()
+                .map(studentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public StudentDtoOut uploadAvatar(MultipartFile multipartFile, long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(()-> new StudentNotFindException(id));
+       Avatar avatar = avatarService.create(student,multipartFile);
+       StudentDtoOut studentDtoOut = studentMapper.toDto(student);
+       studentDtoOut.setAvatarUrl("/avatars/"+ avatar.getId() + "/from-db");
+       return studentDtoOut;
+    }
+
+    public FacultyDtoOut findFaculty(Long id) {
+        return studentRepository.findById(id)
+                .map(Student::getFaculty)
+                .map(facultyMapper::toDto)
+                .orElseThrow(()-> new FacultyNotFindException(id));
+    }
 }
