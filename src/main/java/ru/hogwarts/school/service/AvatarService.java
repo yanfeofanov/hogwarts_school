@@ -11,19 +11,23 @@ import ru.hogwarts.school.exception.AvatarNotFindException;
 import ru.hogwarts.school.exception.AvatarProcessingException;
 import ru.hogwarts.school.repository.AvatarRepository;
 
+import javax.transaction.Transactional;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
 @Service
+
 public class AvatarService {
 
     private final AvatarRepository avatarRepository;
 
     private final Path pathToAvatarDir;
 
-    public AvatarService(AvatarRepository avatarRepository, @Value("${path.to.avatar.dir}") String pathToAvatarDir) {
+    public AvatarService(AvatarRepository avatarRepository, @Value("./avatars") String pathToAvatarDir) {
         this.avatarRepository = avatarRepository;
         this.pathToAvatarDir = Path.of(pathToAvatarDir);
     }
@@ -38,9 +42,13 @@ public class AvatarService {
             Files.write(pathToAvatar, data);
             Avatar avatar = avatarRepository.findByStudent_Id(student.getId())
                     .orElse(new Avatar());
+            if(avatar.getFilePath() != null){
+                Files.delete(Path.of(avatar.getFilePath()));
+            }
             avatar.setMediaType(contentType);
-            avatar.setFileSize((long) data.length);
+            avatar.setFileSize((long)data.length);
             avatar.setData(data);
+            avatar.setStudent(student);
             avatar.setFilePath(pathToAvatar.toString());
             return avatarRepository.save(avatar);
         } catch (IOException e) {
@@ -54,13 +62,17 @@ public class AvatarService {
     }
 
     public Pair<byte[], String> getFromFs(long id) {
-    try{
-        Avatar avatar = avatarRepository.findById(id).orElseThrow(() -> new AvatarNotFindException(id));
-        Files.readAllBytes(Path.of(avatar.getFilePath()));
-        return Pair.of(Files.readAllBytes(Path.of(avatar.getFilePath())),avatar.getMediaType());
-    } catch (IOException e) {
-        throw new AvatarProcessingException() ;
+        Avatar avatar = avatarRepository.findById(id)
+                .orElseThrow(() -> new AvatarNotFindException(id));
+        return Pair.of(read(Path.of(avatar.getFilePath())), avatar.getMediaType());
     }
+
+    private byte[] read(Path path) {
+        try (FileInputStream fileInputStream = new FileInputStream(path.toFile())) {
+            return fileInputStream.readAllBytes();
+        } catch (IOException e) {
+            throw new AvatarProcessingException();
+        }
     }
 
 }

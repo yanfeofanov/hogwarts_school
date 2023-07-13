@@ -6,8 +6,17 @@ public class StudentDtoOut {
     private String name;
     private int age;
 
+    private FacultyDtoOut faculty;
+
     private String avatarUrl;
 
+    public FacultyDtoOut getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(FacultyDtoOut faculty) {
+        this.faculty = faculty;
+    }
 
     public long getId() {
         return id;

@@ -5,12 +5,23 @@ public class StudentDtoIn {
     private String name;
     private int age;
 
-    public StudentDtoIn(String name, int age) {
+    private Long facultyId;
+
+    public StudentDtoIn(String name, int age, long facultyId) {
         this.name = name;
         this.age = age;
+        this.facultyId = facultyId;
     }
 
     public StudentDtoIn() {
+    }
+
+    public Long getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(Long facultyId) {
+        this.facultyId = facultyId;
     }
 
     public String getName() {

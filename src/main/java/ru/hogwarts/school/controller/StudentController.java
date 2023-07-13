@@ -1,20 +1,20 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
-import ru.hogwarts.school.entity.Student;
+
 import ru.hogwarts.school.service.StudentService;
 
-import java.util.Collection;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("/students")
 public class StudentController {
 
     private final StudentService studentService;
@@ -35,13 +35,13 @@ public class StudentController {
     }
 
 
-    @PutMapping("{id}")                      // PUT http://localhost:8080/student/1
-    public StudentDtoOut updateStudent(@PathVariable Long id, @RequestBody StudentDtoIn studentDtoIn) {
+    @PutMapping("/{id}")                      // PUT http://localhost:8080/student/1
+    public StudentDtoOut updateStudent(@PathVariable("id") long id, @RequestBody StudentDtoIn studentDtoIn) {
         return studentService.updateStudent(id, studentDtoIn);
     }
 
-    @DeleteMapping("{id}")                         // DELETE http://localhost:8080/student/1
-    public StudentDtoOut deleteStudent(@PathVariable Long id) {
+    @DeleteMapping("/{id}")                         // DELETE http://localhost:8080/student/1
+    public StudentDtoOut deleteStudent(@PathVariable("id") long id) {
         return studentService.deleteStudent(id);
     }
 
@@ -56,16 +56,17 @@ public class StudentController {
         return studentService.findByAgeBetween(ageFrom, ageTo);
     }
 
-    @PatchMapping(value = "{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public StudentDtoOut uploadAvatar(@PathVariable Long id,
-                                      @RequestPart("avatar") MultipartFile multipartFile) {
-        return studentService.uploadAvatar(multipartFile,id);
-
-    }
-
-    @GetMapping("{id}/faculty")
-    public FacultyDtoOut findFaculty(@PathVariable Long id){
+    @GetMapping("/{id}/faculty")
+    public FacultyDtoOut findFaculty(@PathVariable("id")     long id) {
         return studentService.findFaculty(id);
     }
+
+    @PatchMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentDtoOut uploadAvatar(@PathVariable long id,
+                                      @RequestParam("avatar") MultipartFile multipartFile) {
+        return studentService.uploadAvatar(multipartFile, id);
+
+    }
+
 
 }

@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-@OpenAPIDefinition
+//@OpenAPIDefinition
 public class SchoolHogwartsApplication {
 
     public static void main(String[] args) {

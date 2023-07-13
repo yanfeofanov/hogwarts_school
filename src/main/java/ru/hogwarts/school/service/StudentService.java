@@ -13,6 +13,7 @@ import ru.hogwarts.school.exception.FacultyNotFindException;
 import ru.hogwarts.school.exception.StudentNotFindException;
 import ru.hogwarts.school.mapper.FacultyMapper;
 import ru.hogwarts.school.mapper.StudentMapper;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 
@@ -24,14 +25,17 @@ import java.util.stream.Collectors;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+
+    private final FacultyRepository facultyRepository;
     private final StudentMapper studentMapper;
 
     private final AvatarService avatarService;
 
     private final FacultyMapper facultyMapper;
 
-    public StudentService(StudentRepository studentRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper) {
+    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper) {
         this.studentRepository = studentRepository;
+        this.facultyRepository = facultyRepository;
         this.studentMapper = studentMapper;
         this.avatarService = avatarService;
         this.facultyMapper = facultyMapper;
@@ -83,7 +87,7 @@ public class StudentService {
                 .orElseThrow(()-> new StudentNotFindException(id));
        Avatar avatar = avatarService.create(student,multipartFile);
        StudentDtoOut studentDtoOut = studentMapper.toDto(student);
-       studentDtoOut.setAvatarUrl("/avatars/"+ avatar.getId() + "/from-db");
+       studentDtoOut.setAvatarUrl("http://localhost:8080/avatars/"+ avatar.getId() + "/from-db");
        return studentDtoOut;
     }
 
