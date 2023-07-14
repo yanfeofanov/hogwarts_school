@@ -8,6 +8,7 @@ import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
 
+import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.service.StudentService;
 
 
@@ -67,6 +68,18 @@ public class StudentController {
         return studentService.uploadAvatar(multipartFile, id);
 
     }
+    @GetMapping("/count")
+    public int getCountOfStudenet(){
+        return studentService.getTotalNumber();
+    }
 
+    @GetMapping("/averaeAge")
+    public double getAvereeAge(){
+        return studentService.getAvgAge();
+    }
+    @GetMapping("/last-five")
+    public List<Student> getLsastStudenetss(){
+        return studentService.getLsastStudenetss();
+    }
 
 }

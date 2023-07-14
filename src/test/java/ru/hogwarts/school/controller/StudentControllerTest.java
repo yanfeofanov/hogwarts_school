@@ -107,8 +107,8 @@ public class StudentControllerTest {
 
     @Test
     void getFacultyTest() throws Exception {
-        Faculty faculty = new Faculty(1L, "Faculty", "green");
-        Student student = new Student(1L, "Student", 15);
+        Faculty faculty = new Faculty(1L, "A", "red");
+        Student student = new Student(1L, "B", 15);
         student.setFaculty(faculty);
 
         when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student));

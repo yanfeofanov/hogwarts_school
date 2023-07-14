@@ -3,11 +3,10 @@ package ru.hogwarts.school.controller;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.service.AvatarService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/avatars")
@@ -35,5 +34,10 @@ public class AvatarController {
                 .contentType(MediaType.parseMediaType(stringPair.getSecond()))
                 .contentLength(data.length)
                 .body(data);
+    }
+
+    @GetMapping("/avatars-list")
+    public List<String> getAvatarsList(@RequestParam("number") Integer pageNumber, @RequestParam("size") Integer pageSize) {
+        return avatarService.getAvatarsList(pageNumber, pageSize);
     }
 }

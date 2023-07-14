@@ -97,4 +97,15 @@ public class StudentService {
                 .map(facultyMapper::toDto)
                 .orElseThrow(()-> new FacultyNotFindException(id));
     }
+    public Integer getTotalNumber() {
+        return studentRepository.getTotalNumber();
+    }
+
+    public Integer getAvgAge() {
+        return studentRepository.getAvgAge();
+    }
+
+    public List<Student> getLsastStudenetss() {
+        return studentRepository.getLastFive();
+    }
 }
