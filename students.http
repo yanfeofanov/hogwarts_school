@@ -32,3 +32,6 @@ Content-Type: image/png
 
 < avatar.png
 --WebAppBoundary
+
+###
+GET http://localhost:8080/getPort

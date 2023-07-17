@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ public class StudentService {
 
     private final FacultyMapper facultyMapper;
 
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper) {
         this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
@@ -42,16 +45,19 @@ public class StudentService {
     }
 
     public StudentDtoOut createStudent(StudentDtoIn studentDtoIn) {
+        logger.info("Requesting createStudent : {}", studentDtoIn);
         return studentMapper.toDto(studentRepository.save(studentMapper.toEntity(studentDtoIn)));
     }
 
     public StudentDtoOut readStudent(long id) {
+        logger.info("Requesting readStudent : {}", id);
         return studentRepository.findById(id)
                 .map(studentMapper::toDto)
                 .orElseThrow(()-> new StudentNotFindException(id));
     }
 
     public StudentDtoOut updateStudent(long id,StudentDtoIn studentDtoIn) {
+        logger.info("Requesting updateStudent : {} and {}", studentDtoIn, id);
         return studentRepository.findById(id)
                 .map(oldFaculty -> {
                     oldFaculty.setAge(studentDtoIn.getAge());
@@ -62,6 +68,7 @@ public class StudentService {
     }
 
     public StudentDtoOut deleteStudent(long id) {
+        logger.info("Requesting deleteStudent : {}",id);
         Student student = studentRepository.findById(id)
                 .orElseThrow(()-> new StudentNotFindException(id));
         studentRepository.delete(student);
@@ -69,6 +76,7 @@ public class StudentService {
     }
 
     public List<StudentDtoOut> endpointStudent(@Nullable Integer age) {
+        logger.info("Requesting endpointStudent : {}", age);
         return Optional.ofNullable(age)
                 .map(studentRepository::findAllByAge)
                 .orElseGet(studentRepository::findAll)
@@ -77,12 +85,14 @@ public class StudentService {
     }
 
     public List<StudentDtoOut> findByAgeBetween(int ageFrom, int ageTo) {
+        logger.info("Requesting findByAgeBetween : {} and {}",ageFrom,ageTo);
         return studentRepository.findByAgeBetween(ageFrom,ageTo).stream()
                 .map(studentMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public StudentDtoOut uploadAvatar(MultipartFile multipartFile, long id) {
+        logger.info("Requesting uploadAvatar : {} ",id);
         Student student = studentRepository.findById(id)
                 .orElseThrow(()-> new StudentNotFindException(id));
        Avatar avatar = avatarService.create(student,multipartFile);
@@ -92,20 +102,24 @@ public class StudentService {
     }
 
     public FacultyDtoOut findFaculty(Long id) {
+        logger.info("Requesting findFaculty : {} ",id);
         return studentRepository.findById(id)
                 .map(Student::getFaculty)
                 .map(facultyMapper::toDto)
                 .orElseThrow(()-> new FacultyNotFindException(id));
     }
     public Integer getTotalNumber() {
+        logger.info("Requesting getTotalNumber");
         return studentRepository.getTotalNumber();
     }
 
     public Integer getAvgAge() {
+        logger.info("Requesting getAvgAge");
         return studentRepository.getAvgAge();
     }
 
     public List<Student> getLsastStudenetss() {
+        logger.info("Requesting getLsastStudenets");
         return studentRepository.getLastFive();
     }
 }
