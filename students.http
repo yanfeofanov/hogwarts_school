@@ -1,0 +1,34 @@
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "Yan",
+  "age": 32
+}
+
+###
+GET http://localhost:8080/students/7
+
+###
+PUT http://localhost:8080/students/5
+Content-Type: application/json
+
+{
+  "id" : 5,
+  "name" : "Ivan",
+  "age": 12
+}
+
+###
+DELETE http://localhost:8080/students/7
+
+###
+PATCH http://localhost:8080/students/24/avatar
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.png"
+Content-Type: image/png
+
+< avatar.png
+--WebAppBoundary
