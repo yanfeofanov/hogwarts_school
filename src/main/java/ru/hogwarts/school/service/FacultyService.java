@@ -1,11 +1,13 @@
 package ru.hogwarts.school.service;
 
+import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.dto.FacultyDtoIn;
 import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoOut;
 import ru.hogwarts.school.entity.Faculty;
+import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.exception.FacultyNotFindException;
 import ru.hogwarts.school.mapper.FacultyMapper;
 import ru.hogwarts.school.mapper.StudentMapper;
@@ -14,6 +16,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyService{
@@ -81,4 +84,12 @@ public class FacultyService{
                 .map(studentMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public Collection<Student> getLengthWords(Character words) {
+        return studentRepository.findAll().stream()
+                .filter(student -> student.getName().charAt(0)==words)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
 }

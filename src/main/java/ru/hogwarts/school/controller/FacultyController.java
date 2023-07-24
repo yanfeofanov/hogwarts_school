@@ -7,8 +7,11 @@ import ru.hogwarts.school.dto.FacultyDtoOut;
 
 import ru.hogwarts.school.dto.StudentDtoOut;
 
+import ru.hogwarts.school.entity.Faculty;
+import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.service.FacultyService;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -58,5 +61,10 @@ public class FacultyController {
         return facultyService.findStudents(id);
     }
 
+
+    @GetMapping("/word/{words}")
+    public Collection<Student> getLengthWords(@PathVariable ("words") Character words){
+        return facultyService.getLengthWords(words);
+    }
 
 }

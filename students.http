@@ -2,10 +2,18 @@ POST http://localhost:8080/students
 Content-Type: application/json
 
 {
-  "name": "Yan",
-  "age": 32
+  "name": "Олег",
+  "age": 56
 }
 
+###
+POST http://localhost:8080/faculties
+Content-Type: application/json
+
+{
+  "name": "Slytherin",
+  "color": "black"
+}
 ###
 GET http://localhost:8080/students/7
 
@@ -15,8 +23,8 @@ Content-Type: application/json
 
 {
   "id" : 5,
-  "name" : "Ivan",
-  "age": 12
+  "name" : "Ян",
+  "age": 43
 }
 
 ###

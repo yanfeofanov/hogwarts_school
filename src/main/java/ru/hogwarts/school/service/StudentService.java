@@ -19,9 +19,12 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StudentService {
@@ -36,6 +39,7 @@ public class StudentService {
     private final FacultyMapper facultyMapper;
 
     Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper) {
         this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
@@ -53,10 +57,10 @@ public class StudentService {
         logger.info("Requesting readStudent : {}", id);
         return studentRepository.findById(id)
                 .map(studentMapper::toDto)
-                .orElseThrow(()-> new StudentNotFindException(id));
+                .orElseThrow(() -> new StudentNotFindException(id));
     }
 
-    public StudentDtoOut updateStudent(long id,StudentDtoIn studentDtoIn) {
+    public StudentDtoOut updateStudent(long id, StudentDtoIn studentDtoIn) {
         logger.info("Requesting updateStudent : {} and {}", studentDtoIn, id);
         return studentRepository.findById(id)
                 .map(oldFaculty -> {
@@ -64,13 +68,13 @@ public class StudentService {
                     oldFaculty.setName(studentDtoIn.getName());
                     return studentMapper.toDto(studentRepository.save(oldFaculty));
                 })
-                .orElseThrow(()->new StudentNotFindException(id));
+                .orElseThrow(() -> new StudentNotFindException(id));
     }
 
     public StudentDtoOut deleteStudent(long id) {
-        logger.info("Requesting deleteStudent : {}",id);
+        logger.info("Requesting deleteStudent : {}", id);
         Student student = studentRepository.findById(id)
-                .orElseThrow(()-> new StudentNotFindException(id));
+                .orElseThrow(() -> new StudentNotFindException(id));
         studentRepository.delete(student);
         return studentMapper.toDto(student);
     }
@@ -85,29 +89,30 @@ public class StudentService {
     }
 
     public List<StudentDtoOut> findByAgeBetween(int ageFrom, int ageTo) {
-        logger.info("Requesting findByAgeBetween : {} and {}",ageFrom,ageTo);
-        return studentRepository.findByAgeBetween(ageFrom,ageTo).stream()
+        logger.info("Requesting findByAgeBetween : {} and {}", ageFrom, ageTo);
+        return studentRepository.findByAgeBetween(ageFrom, ageTo).stream()
                 .map(studentMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public StudentDtoOut uploadAvatar(MultipartFile multipartFile, long id) {
-        logger.info("Requesting uploadAvatar : {} ",id);
+        logger.info("Requesting uploadAvatar : {} ", id);
         Student student = studentRepository.findById(id)
-                .orElseThrow(()-> new StudentNotFindException(id));
-       Avatar avatar = avatarService.create(student,multipartFile);
-       StudentDtoOut studentDtoOut = studentMapper.toDto(student);
-       studentDtoOut.setAvatarUrl("http://localhost:8080/avatars/"+ avatar.getId() + "/from-db");
-       return studentDtoOut;
+                .orElseThrow(() -> new StudentNotFindException(id));
+        Avatar avatar = avatarService.create(student, multipartFile);
+        StudentDtoOut studentDtoOut = studentMapper.toDto(student);
+        studentDtoOut.setAvatarUrl("http://localhost:8080/avatars/" + avatar.getId() + "/from-db");
+        return studentDtoOut;
     }
 
     public FacultyDtoOut findFaculty(Long id) {
-        logger.info("Requesting findFaculty : {} ",id);
+        logger.info("Requesting findFaculty : {} ", id);
         return studentRepository.findById(id)
                 .map(Student::getFaculty)
                 .map(facultyMapper::toDto)
-                .orElseThrow(()-> new FacultyNotFindException(id));
+                .orElseThrow(() -> new FacultyNotFindException(id));
     }
+
     public Integer getTotalNumber() {
         logger.info("Requesting getTotalNumber");
         return studentRepository.getTotalNumber();
@@ -122,4 +127,28 @@ public class StudentService {
         logger.info("Requesting getLsastStudenets");
         return studentRepository.getLastFive();
     }
+
+    public List<String> getSortName() {
+        return studentRepository.findAll().stream()
+                .sorted(Comparator.comparing(Student::getName))
+                .map(student -> student.getName().toUpperCase())
+                .collect(Collectors.toList());
+    }
+
+    public double getAverageAgeStudent() {
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge).average().orElse(0.0);
+    }
+
+
+    public Integer getSum() {
+        int sum = 0;
+        sum = Stream.iterate(1, a -> a + 1).parallel().limit(1_000_000).sorted().reduce(0, (a, b) -> a + b);
+        System.currentTimeMillis();
+        return sum;
+        // Выполнение быстрее происходит без ввода parallel().
+    }
+
+
+
 }
