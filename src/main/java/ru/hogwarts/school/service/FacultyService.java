@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class FacultyService{
+public class FacultyService {
 
     private final FacultyRepository facultyRepository;
 
@@ -86,8 +86,9 @@ public class FacultyService{
     }
 
     public Collection<Student> getLengthWords(Character words) {
+
         return studentRepository.findAll().stream()
-                .filter(student -> student.getName().charAt(0)==words)
+                .filter(student -> student.getName().charAt(0) == words)
                 .sorted()
                 .collect(Collectors.toList());
     }

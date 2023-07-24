@@ -59,7 +59,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}/faculty")
-    public FacultyDtoOut findFaculty(@PathVariable("id")     long id) {
+    public FacultyDtoOut findFaculty(@PathVariable("id") long id) {
         return studentService.findFaculty(id);
     }
 
@@ -69,35 +69,39 @@ public class StudentController {
         return studentService.uploadAvatar(multipartFile, id);
 
     }
+
     @GetMapping("/count")
-    public int getCountOfStudenet(){
+    public int getCountOfStudenet() {
         return studentService.getTotalNumber();
     }
 
     @GetMapping("/averaeAge")
-    public double getAvereeAge(){
+    public double getAvereeAge() {
         return studentService.getAvgAge();
     }
+
     @GetMapping("/last-five")
-    public List<Student> getLsastStudenetss(){
+    public List<Student> getLsastStudenetss() {
         return studentService.getLsastStudenetss();
     }
 
     @GetMapping("/sortName")
-    public List<String> getSortName(){
+
+    public List<String> getSortName() {
         return studentService.getSortName();
     }
 
     @GetMapping("/avarageAge/student")
-    public double getAverageAgeStudent(){
+
+    public double getAverageAgeStudent() {
         return studentService.getAverageAgeStudent();
     }
 
     @GetMapping("/sum")
-    public Integer getSum(){
+
+    public Integer getSum() {
         return studentService.getSum();
     }
-
 
 
 }

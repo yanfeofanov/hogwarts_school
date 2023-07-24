@@ -63,7 +63,8 @@ public class FacultyController {
 
 
     @GetMapping("/word/{words}")
-    public Collection<Student> getLengthWords(@PathVariable ("words") Character words){
+    public Collection<Student> getLengthWords(@PathVariable("words") Character words) {
+
         return facultyService.getLengthWords(words);
     }
 

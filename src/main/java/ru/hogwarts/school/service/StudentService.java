@@ -129,6 +129,7 @@ public class StudentService {
     }
 
     public List<String> getSortName() {
+
         return studentRepository.findAll().stream()
                 .sorted(Comparator.comparing(Student::getName))
                 .map(student -> student.getName().toUpperCase())
@@ -136,19 +137,20 @@ public class StudentService {
     }
 
     public double getAverageAgeStudent() {
+
         return studentRepository.findAll().stream()
                 .mapToInt(Student::getAge).average().orElse(0.0);
     }
 
 
     public Integer getSum() {
+
         int sum = 0;
         sum = Stream.iterate(1, a -> a + 1).parallel().limit(1_000_000).sorted().reduce(0, (a, b) -> a + b);
         System.currentTimeMillis();
         return sum;
         // Выполнение быстрее происходит без ввода parallel().
     }
-
 
 
 }
