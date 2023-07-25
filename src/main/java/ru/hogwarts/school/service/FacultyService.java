@@ -85,10 +85,9 @@ public class FacultyService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<Student> getLengthWords(Character words) {
-
-        return studentRepository.findAll().stream()
-                .filter(student -> student.getName().charAt(0) == words)
+    public Collection<Faculty> getLengthWords(Character character) {
+        return facultyRepository.findAll().stream()
+                .filter(f -> f.getName().startsWith(String.valueOf(character)))
                 .sorted()
                 .collect(Collectors.toList());
     }
