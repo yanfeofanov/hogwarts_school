@@ -103,5 +103,15 @@ public class StudentController {
         return studentService.getSum();
     }
 
+    @GetMapping("/thread/firstThread")
+    public void firstList() {
+      studentService.firstListThread();
+    }
+
+    @GetMapping("/thread/nextThread")
+    public void nextListThread(){
+        studentService.nextListThread();
+    }
+
 
 }

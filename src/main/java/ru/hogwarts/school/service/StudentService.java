@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
+
 @Service
 public class StudentService {
 
@@ -153,4 +155,55 @@ public class StudentService {
     }
 
 
+    public void firstListThread() {
+        List<Student> students = studentRepository.findAll();
+
+        printStudent(students.get(0));
+        printStudent(students.get(1));
+        new Thread(()->{
+
+          printStudent(students.get(1));
+          printStudent(students.get(2));
+        }).start();
+        new Thread(()->{
+            printStudent(students.get(4));
+            printStudent(students.get(5));
+        }).start();
+
+    }
+
+    private void printStudent(Student student){
+        try {
+            Thread.sleep(1000);
+            logger.info(student.toString());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void nextListThread() {
+        List<Student> students = studentRepository.findAll();
+
+        printStudentSync(students.get(0));
+        printStudentSync(students.get(1));
+        new Thread(()->{
+
+            printStudentSync(students.get(2));
+            printStudentSync(students.get(3));
+        }).start();
+        new Thread(()->{
+            printStudentSync(students.get(4));
+            printStudentSync(students.get(5));
+        }).start();
+
+    }
+    private synchronized void printStudentSync(Student student){
+        try {
+            Thread.sleep(1000);
+            logger.info(student.toString());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
