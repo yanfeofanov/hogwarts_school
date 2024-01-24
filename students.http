@@ -1,0 +1,45 @@
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "Олег",
+  "age": 56
+}
+
+###
+POST http://localhost:8080/faculties
+Content-Type: application/json
+
+{
+  "name": "Slytherin",
+  "color": "black"
+}
+###
+GET http://localhost:8080/students/7
+
+###
+PUT http://localhost:8080/students/5
+Content-Type: application/json
+
+{
+  "id" : 5,
+  "name" : "Ян",
+  "age": 43
+}
+
+###
+DELETE http://localhost:8080/students/7
+
+###
+PATCH http://localhost:8080/students/24/avatar
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.png"
+Content-Type: image/png
+
+< avatar.png
+--WebAppBoundary
+
+###
+GET http://localhost:8080/getPort
